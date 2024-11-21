@@ -29,6 +29,7 @@ $packages = [
 ];
 
 $possible_packages = [];
+$best_option = null;
 foreach ($packages as $package) {
     $package_needed = ceil($total_slices / $package['slices']);
     $total_cost = $package_needed * $package['price'];
@@ -36,18 +37,38 @@ foreach ($packages as $package) {
     $possible_packages[] = [
         "name" => $package["name"],
         "package_needed" => $package_needed,
-        "total_price" => $total_cost
+        "total_price" => $total_cost,
+        "unit_price" => $package['price'],
     ];
 
+    if ($best_option === null || $total_cost < $best_option['total_price']) {
+        $best_option = [
+            'name' => $package['name'],
+            "package_needed" => $package_needed,
+            'total_price' => $total_cost,
+        ];
+    }
 }
 
-usort($possible_packages, fn($a, $b) => $a['total_price'] <=> $b['total_price']);
+//usort($possible_packages, fn($a, $b) => $a['total_price'] <=> $b['total_price']);
 
 echo "No of people {$no_of_people} <br>";
 echo "No of total slices {$total_slices} <br>";
-echo "Most suitable package: {$possible_packages[0]['name']}\n <br> <br>";
 
+// Display packages
+echo "<br>All Suitable Pizza Packages: <br>";
+echo str_repeat("-", 50) . " <br>";
 foreach ($possible_packages as $pkg) {
-
-    echo "Total Price: $" . $pkg["total_price"] . " | Total {$pkg['package_needed']} {$pkg["name"]} Pizzas Needed <br>";
+    echo "Package: {$pkg['name']} (Unit Price: \${$pkg['unit_price']})<br>";
+    echo "  Packages Needed: {$pkg['package_needed']} <br>";
+    echo "  Total Price: \${$pkg['total_price']} <br>";
+    echo str_repeat("-", 50) . " <br>";
 }
+
+// Summary
+echo " <br>Summary: <br>";
+echo "No. of People: {$no_of_people} <br>";
+echo "Total Slices Needed: {$total_slices} <br><br>";
+echo "Most Suitable Package: {$best_option['name']} <br>";
+echo "Pizza Package Needed: {$best_option['package_needed']}  <br>";
+echo "Total Cost: \${$best_option['total_price']}  <br>";
